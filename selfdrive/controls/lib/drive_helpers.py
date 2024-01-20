@@ -298,3 +298,12 @@ def get_lane_laneless_mode(lll_prob, rll_prob, mode):
   elif lll_prob > 0.5 or rll_prob > 0.5:
     mode = True
   return mode
+
+def get_friction(lateral_accel_error: float, lateral_accel_deadzone: float, friction_threshold: float, torque_params: car.CarParams.LateralTorqueTuning, friction_compensation: bool) -> float:
+  friction_interp = interp(
+    apply_center_deadzone(lateral_accel_error, lateral_accel_deadzone),
+    [-friction_threshold, friction_threshold],
+    [-torque_params.friction, torque_params.friction]
+  )
+  friction = float(friction_interp) if friction_compensation else 0.0
+  return friction
