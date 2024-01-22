@@ -115,6 +115,7 @@ class Controls:
     else:
       self.CI, self.CP = CI, CI.CP
 
+    print("Using car {}".format(self.CP))
     self.joystick_mode = self.params.get_bool("JoystickDebugMode") or self.CP.notCar
 
     # set alternative experiences from parameters

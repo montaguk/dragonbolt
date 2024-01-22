@@ -245,6 +245,9 @@ def get_car(logcan, sendcan, experimental_long_allowed, num_pandas=1):
     CP.fingerprintSource = source
     CP.fuzzyFingerprint = not exact_match
 
+    print("Got Car: ", CP)
+
     return CarInterface(CP, CarController, CarState), CP
-  except KeyError:
+  except KeyError as e:
+    print("Failed to find car using key. {}".format(e))
     return None, None
