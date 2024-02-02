@@ -23,8 +23,10 @@ def main():
 
     print('current', shutdown_count, 'shutdown_at', shutdown_at)
 
-    if shutdown_count >= shutdown_at > 0:
-      os.system('LD_LIBRARY_PATH="" svc power shutdown')
+    # Don't actually shutdown since this is C2 and doesn't have a battery
+    # If we are on, we have USB and we are good to go
+    # if shutdown_count >= shutdown_at > 0:
+    #   os.system('LD_LIBRARY_PATH="" svc power shutdown')
 
     time.sleep(5)
 
