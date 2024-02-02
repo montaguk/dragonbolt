@@ -46,6 +46,12 @@ class CarState(CarStateBase):
       self.pt_lka_steering_cmd_counter = pt_cp.vl["ASCMLKASteeringCmd"]["RollingCounter"]
       self.cam_lka_steering_cmd_counter = cam_cp.vl["ASCMLKASteeringCmd"]["RollingCounter"]
 
+      print('LKAS STATE: pt_idx:{}, cam_idx:{}, lp_idx:{}'.format(
+        pt_cp.vl["ASCMLKASteeringCmd"]["RollingCounter"],
+        cam_cp.vl["ASCMLKASteeringCmd"]["RollingCounter"],
+        loopback_cp.vl["ASCMLKASteeringCmd"]["RollingCounter"]
+        ))
+
     ret.wheelSpeeds = self.get_wheel_speeds(
       pt_cp.vl["EBCMWheelSpdFront"]["FLWheelSpd"],
       pt_cp.vl["EBCMWheelSpdFront"]["FRWheelSpd"],
@@ -188,15 +194,9 @@ class CarState(CarStateBase):
       ("LKADriverAppldTrq", "PSCMStatus"),
       ("LKATorqueDelivered", "PSCMStatus"),
       ("LKATorqueDeliveredStatus", "PSCMStatus"),
-      ("HandsOffSWlDetectionStatus", "PSCMStatus"),
-      ("HandsOffSWDetectionMode", "PSCMStatus"),
-      ("LKATotalTorqueDelivered", "PSCMStatus"),
-      ("PSCMStatusChecksum", "PSCMStatus"),
-      ("RollingCounter", "PSCMStatus"),
       ("TractionControlOn", "ESPStatus"),
       ("ParkBrake", "VehicleIgnitionAlt"),
       ("CruiseMainOn", "ECMEngineStatus"),
-      ("BrakePressed", "ECMEngineStatus"),
     ]
 
     checks = [
@@ -208,12 +208,11 @@ class CarState(CarStateBase):
       ("VehicleIgnitionAlt", 10),
       ("EBCMWheelSpdFront", 20),
       ("EBCMWheelSpdRear", 20),
-      ("EBCMFrictionBrakeStatus", 20),
       ("AcceleratorPedal2", 33),
       ("ASCMSteeringButton", 33),
       ("ECMEngineStatus", 100),
       ("PSCMSteeringAngle", 100),
-      ("ECMAcceleratorPos", 80),
+      ("EBCMBrakePedalPosition", 100),
     ]
 
     # Used to read back last counter sent to PT by camera
@@ -253,7 +252,9 @@ class CarState(CarStateBase):
     ]
 
     checks = [
-      ("ASCMLKASteeringCmd", 0),
+      ("ASCMLKASteeringCmd", 10), # 10 Hz is the stock inactive rate (every 100ms).
+      #                             While active 50 Hz (every 20 ms) is normal
+      #                             EPS will tolerate around 200ms when active before faulting
     ]
 
     return CANParser(DBC[CP.carFingerprint]["pt"], signals, checks, CanBus.LOOPBACK, enforce_checks=False)

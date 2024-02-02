@@ -104,6 +104,8 @@ class CarController:
       idx = self.lka_steering_cmd_counter % 4
       can_sends.append(gmcan.create_steering_control(self.packer_pt, CanBus.POWERTRAIN, apply_steer, idx, CC.latActive))
 
+      print('LKAS STEER: idx:{}, steer:{}, latAct:{}'.format(idx, apply_steer, CC.latActive))
+
     if self.CP.openpilotLongitudinalControl:
       # Gas/regen, brakes, and UI commands - all at 25Hz
       if self.frame % 4 == 0:
