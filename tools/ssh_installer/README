@@ -1,0 +1,8 @@
+Use the script from this repo to install when you get stuck and the "no network connection"
+
+https://github.com/jyoung8607/neos-manual-install
+
+SSH into Comma2
+
+RUN this script
+curl -Ls https://tinyurl.com/bdhse3xn | bash -s dragonbolt c2-eon-bolt-test

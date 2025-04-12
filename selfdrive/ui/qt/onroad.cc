@@ -138,9 +138,9 @@ void OnroadWindow::mouseReleaseEvent(QMouseEvent* e) {
         pathOffset = std::max(pathOffset - 0.05f, -1.0f);
       }
 
-      // Use put_nonblocking to avoid UI lag
+      // Put value
       std::string new_value = std::to_string(pathOffset);
-      params.put_nonblocking("pathOffset", new_value);
+      params.put("pathOffset", new_value);
     }
 
     return;
