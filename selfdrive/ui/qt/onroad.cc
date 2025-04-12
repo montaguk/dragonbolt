@@ -115,17 +115,32 @@ void OnroadWindow::mouseReleaseEvent(QMouseEvent* e) {
     }
     else if(std::abs(dx) > std::abs(dy)) {
 
-#if  defined(QCOM2) || defined(QCOM)
+// #if  defined(QCOM2) || defined(QCOM)
 
-      if(dx < 0) { // right to left
-        if(recorder)
-          recorder->toggle();
+//       if(dx < 0) { // right to left
+//         if(recorder)
+//           recorder->toggle();
+//       }
+//       else { // left to right
+//         if(recorder)
+//           recorder->toggle();
+//       }
+// #endif
+
+      // Get current pathOffset value, default to 0.0 if not set
+      std::string value = params.get("pathOffset");
+      float pathOffset = value.empty() ? 0.0 : std::stof(value);
+
+      // Update pathOffset based on swipe direction
+      if (dx > 0) {  // Swipe right
+        pathOffset = std::min(pathOffset + 0.05f, 1.0f);
+      } else {  // Swipe left
+        pathOffset = std::max(pathOffset - 0.05f, -1.0f);
       }
-      else { // left to right
-        if(recorder)
-          recorder->toggle();
-      }
-#endif
+
+      // Use put_nonblocking to avoid UI lag
+      std::string new_value = std::to_string(pathOffset);
+      params.put_nonblocking("pathOffset", new_value);
     }
 
     return;
@@ -1222,6 +1237,12 @@ void NvgWindow::drawDebugText(QPainter &p) {
     p.drawText(text_x, y, str);
   }
   y += height;
+
+  str.sprintf("pathOffset: %.2f\n", std::stof(params.get("pathOffset")));
+  p.drawText(text_x, y, str);
+
+  y += height;
+
 //  str.sprintf("Commit: %s\n", vision_dist);
   p.drawText(text_x, y, this->gitCommit);
 

@@ -109,6 +109,7 @@ protected:
   void mouseReleaseEvent(QMouseEvent* e) override;
 
   void paintEvent(QPaintEvent *event) override;
+  Params params;
 
 private:
   OnroadAlerts *alerts;

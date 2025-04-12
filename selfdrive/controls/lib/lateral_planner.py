@@ -3,6 +3,8 @@ from common.realtime import sec_since_boot, DT_MDL
 from common.numpy_fast import interp
 from selfdrive.ntune import ntune_common_get
 from selfdrive.swaglog import cloudlog
+from common.params import Params
+from common.numpy_fast import clip
 from selfdrive.controls.lib.lateral_mpc_lib.lat_mpc import LateralMpc
 from selfdrive.controls.lib.drive_helpers import CONTROL_N, MPC_COST_LAT, LAT_MPC_N, CAR_ROTATION_RADIUS
 from selfdrive.controls.lib.lane_planner import LanePlanner, TRAJECTORY_SIZE
@@ -62,7 +64,16 @@ class LateralPlanner:
     else:
       d_path_xyz = self.path_xyz
 
-    d_path_xyz[:, 1] += ntune_common_get('pathOffset')
+    # d_path_xyz[:, 1] += ntune_common_get('pathOffset')
+    # Read pathOffset from params instead of ntune
+    try:
+      path_offset = float(Params().get("pathOffset", encoding='utf8') or "0")
+      # Clamp to valid range
+      path_offset = clip(path_offset, -1.0, 1.0)
+    except (ValueError, TypeError):
+      path_offset = 0.0
+
+    d_path_xyz[:, 1] += path_offset
 
     self.lat_mpc.set_weights(MPC_COST_LAT.PATH, MPC_COST_LAT.HEADING, ntune_common_get('steerRateCost'))
 
